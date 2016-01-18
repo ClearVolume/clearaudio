@@ -1,0 +1,13 @@
+bin/
+build/
+.project
+.classpath
+.settings/*
+.gradle
+.idea
+*.class
+.DS_Store
+hs_err_pid*
+old
+log.txt
+
