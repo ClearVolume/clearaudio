@@ -47,8 +47,8 @@ sourceSets
 
 javadoc { options.charSet = 'UTF-8' }
 
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 test
 {
@@ -145,7 +145,7 @@ def getVersionName = {
 	return stdout.toString().trim()
 }
 
-group = 'net.clearaudio'
+group = 'net.clearvolume'
 version = getVersionName()
 
 artifacts
@@ -183,7 +183,7 @@ if(hasProperty('bintray_user') && hasProperty('bintray_key') )
 			websiteUrl = 'https://clearvolume.github.io/ClearVolume/'
 			issueTrackerUrl = 'https://github.com/ClearVolume/ClearVolume/issues'
 			vcsUrl = 'https://github.com/ClearVolume/ClearVolume.git'
-			//licenses = ['Apache-2.0']
+			licenses = ['GPL-3.0']
 			labels = [
 				'ClearVolume',
 				'Audio',
@@ -199,7 +199,7 @@ if(hasProperty('bintray_user') && hasProperty('bintray_key') )
 				desc = '.'
 				released  = new java.util.Date()
 				vcsTag = project.version
-				/*attributes = ['gradle-plugin': 'com.use.less:com.use.less.gradle:gradle-useless-plugin'] //Optional version-level attributes
+				attributes = ['gradle-plugin': 'com.use.less:com.use.less.gradle:gradle-useless-plugin'] //Optional version-level attributes
 				 gpg {
 				 sign = false //Determines whether to GPG sign the files. The default is false
 				 passphrase = 'passphrase' //Optional. The passphrase for GPG signing'
