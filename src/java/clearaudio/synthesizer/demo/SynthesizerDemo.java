@@ -32,7 +32,10 @@ public class SynthesizerDemo
 
 		lSoundOut.start();
 		for (int i = 0; i < 1000; i++)
+		{
+			lSinusoid.setFrequencyInHertz(440+10*i);
 			lSynthesizer.playSamples();
+		}
 		lSoundOut.stop();
 	}
 
