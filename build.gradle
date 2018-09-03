@@ -1,24 +1,18 @@
-
-
 plugins {
 	id "com.jfrog.bintray" version "1.2"
+	id "com.diffplug.gradle.spotless" version "3.1.0"
+	id "de.undercouch.download" version "3.4.3"
 }
-
 
 apply plugin: 'java'
 apply plugin: 'eclipse'
+apply plugin: 'idea'
 apply plugin: 'maven'
 apply plugin: 'maven-publish'
-apply plugin: 'c'
-apply plugin: 'cpp'
-apply plugin: 'idea'
 
 
-[
-	compileJava,
-	compileTestJava
-]*.options*.encoding = 'UTF-8'
-
+// Master gradle file:
+apply from: 'https://github.com/ClearControl/master/blob/master/master.gradle?raw=true'
 
 
 
@@ -32,18 +26,23 @@ sourceSets
 	main
 	{
 		java
-		{ srcDir 'src/java' }
-		resources
-		{  srcDir 'src/java' }
+		{ srcDir 'src/main/java' }
+    resources
+		{ srcDir 'src/main/java' }
 	}
 	test
 	{
 		java
-		{ srcDir 'src/java' }
-		resources
-		{  srcDir 'src/java' }
+		{ srcDir 'src/test/java' }
+    resources
+		{ srcDir 'src/test/java' }
 	}
 }
+
+[
+	compileJava,
+	compileTestJava
+]*.options*.encoding = 'UTF-8'
 
 javadoc { options.charSet = 'UTF-8' }
 
@@ -63,31 +62,22 @@ test
 }
 
 
-def versionOverrides = [
-	"org.jdom:jdom2": "2.0.5"
-]
-
-configurations.all
-{
-	// check for updates every build
-	resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
-	resolutionStrategy.force("org.jdom:jdom2:2.0.5")
-}
-
-
 dependencies
 {
-	
 	compile 'net.sf.trove4j:trove4j:3.0.3'
-	
 	compile group: 'junit', name: 'junit', version: '4.12'
 	testCompile group: 'junit', name: 'junit', version: '4.12'
-
 }
 
 repositories
 {
-	mavenCentral()
+	// Main repos:
+    mavenLocal()
+    mavenCentral()
+    jcenter()  
+
+
+    // Other repos:
 	maven { url  "http://dl.bintray.com/clearvolume/ClearVolume"  }
 	maven { url  "http://dl.bintray.com/royerloic/maven" }
 	maven { url "http://oss.sonatype.org/content/groups/public" }
@@ -119,21 +109,8 @@ if (JavaVersion.current().isJava8Compatible()) {
 //***********************************************************************************
 // PUBLISHING
 
-/*
- * Gets the version name from the latest Git tag
- */
-def getVersionName = {
-	->
-	def stdout = new ByteArrayOutputStream()
-	exec {
-		commandLine 'git', 'describe', '--tags'
-		standardOutput = stdout
-	}
-	return stdout.toString().trim()
-}
-
-group = 'net.clearvolume'
-version = getVersionName()
+group   = project.ext.groupname
+version = project.ext.versionsMap[project.name]
 
 artifacts
 {
@@ -148,59 +125,6 @@ publishing {
 			artifact sourcesJar { classifier "sources" }
 		}
 	}
-}
-
-if(hasProperty('bintray_user') && hasProperty('bintray_key') )
-{
-	bintray {
-
-		// property must be set in ~/.gradle/gradle.properties
-		user = bintray_user
-		key =  bintray_key
-
-		publications = [
-			'maven'] //When uploading configuration files
-		dryRun = false //Whether to run this as dry-run, without deploying
-		publish = true //If version should be auto published after an upload
-		pkg {
-			repo = 'ClearVolume'
-			userOrg = 'clearvolume' //An optional organization name when the repo belongs to one of the user's orgs
-			name = 'ClearAudio'
-			desc = 'ClearAudio'
-			websiteUrl = 'https://clearvolume.github.io/ClearVolume/'
-			issueTrackerUrl = 'https://github.com/ClearVolume/ClearVolume/issues'
-			vcsUrl = 'https://github.com/ClearVolume/ClearVolume.git'
-			licenses = ['GPL-3.0']
-			labels = [
-				'ClearVolume',
-				'Audio',
-				'Music',
-				'Syntheziser',
-				'Real-time'
-			]
-			publicDownloadNumbers = true
-			//attributes= ['a': ['ay1', 'ay2'], 'b': ['bee'], c: 'cee'] //Optional package-level attributes
-			//Optional version descriptor
-			version {
-				name = project.version //Bintray logical version name
-				desc = '.'
-				released  = new java.util.Date()
-				vcsTag = project.version
-				attributes = ['gradle-plugin': 'com.use.less:com.use.less.gradle:gradle-useless-plugin'] //Optional version-level attributes
-				 gpg {
-				 sign = false //Determines whether to GPG sign the files. The default is false
-				 passphrase = 'passphrase' //Optional. The passphrase for GPG signing'
-				 }
-				 mavenCentralSync {
-				 sync = false //Optional (true by default). Determines whether to sync the version to Maven Central.
-				 user = 'userToken' //OSS user token
-				 password = 'paasword' //OSS user password
-				 close = '1' //Optional property. By default the staging repository is closed and artifacts are released to Maven Central. You can optionally turn this behaviour off (by puting 0 as value) and release the version manually.
-				 }  /**/          
-			}
-		}
-	}
-	/**/
 }
 
 
