@@ -1,5 +1,5 @@
 plugins {
-	id "com.jfrog.bintray" version "1.2"
+	id "com.jfrog.bintray" version "1.8.3"
 	id "com.diffplug.gradle.spotless" version "3.1.0"
 	id "de.undercouch.download" version "3.4.3"
 }
@@ -11,12 +11,23 @@ apply plugin: 'maven'
 apply plugin: 'maven-publish'
 
 
-// Master gradle file:
-apply from: 'https://github.com/ClearControl/master/blob/master/master.gradle?raw=true'
+project.ext.masterfile = (new File(projectDir,'/gradle/master.gradle')).getAbsolutePath()
 
+// Attempts to download master gradle file
+try {
+	download {
+		src 'https://github.com/ClearControl/master/blob/master/master.gradle?raw=true'
+		dest project.ext.masterfile
+		overwrite false
+		onlyIfModified true
+		tempAndMove true
+	}
+}
+catch (Throwable e)
+{
+}
 
-
-
+apply from: project.ext.masterfile
 
 //***********************************************************************************
 // JAVA CODE BUILDING
