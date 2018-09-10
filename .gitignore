@@ -10,9 +10,4 @@ build/
 hs_err_pid*
 old
 log.txt
-
-gradle/bintrayUpload.gradle
-gradle/installGitHooks
-gradle/master.gradle
-gradle/spotless.gradle
 codeformat.eclipse.xml
