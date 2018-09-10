@@ -14,6 +14,7 @@ apply plugin: 'maven-publish'
 project.ext.masterfile = (new File(projectDir,'/gradle/master.gradle')).getAbsolutePath()
 
 // Attempts to download master gradle file
+if(!hasProperty('do_not_update_master_file'))
 try {
 	download {
 		src 'https://github.com/ClearControl/master/blob/master/master.gradle?raw=true'
